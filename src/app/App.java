@@ -5,18 +5,14 @@
  */
 package app;
 import app.db.Connection;
-import app.util.EnvMap;
 
 /**
  *
  * @author Henk-PC
  */
 public class App {
-    
-    EnvMap environmentVars;
-    
-    public App() {
-        // Connection conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", "", "");
-        environmentVars = new EnvMap();
+     
+    public App(String user, String pass) {
+        Connection conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", user, pass);
     }    
 }
