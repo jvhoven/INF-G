@@ -11,17 +11,11 @@ import app.views.MainView;
  * @author Henk-PC
  */
 public class App {
-
-    
-    
-    public App() {
-        // Connection conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", "", "");
-        MainView mainView = new MainView();
-        mainView.show();
-    }
      
     public App(String user, String pass) {
         Connection conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", user, pass);
+        MainView mainView = new MainView();
+        mainView.show();
 
     }    
 }
