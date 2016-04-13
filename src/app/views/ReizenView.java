@@ -21,6 +21,7 @@ public class ReizenView extends javax.swing.JFrame {
         jTabbedPane1.add("Reizen", new TripPanel());
         jTabbedPane1.add("Hotels", new HotelPanel());
         jTabbedPane1.add("Transport", new TransportMethodPanel());
+        jTabbedPane1.add("Excursies", new ExcursionPanel());
     }
 
     /**

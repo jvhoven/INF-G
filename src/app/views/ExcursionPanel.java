@@ -6,11 +6,9 @@
 package app.views;
 
 import app.App;
-import app.Country;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,12 +16,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author MatthijsSmit
  */
-public class TransportMethodPanel extends javax.swing.JPanel {
+public class ExcursionPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form TransportMethodPanel
+     * Creates new form ExcursionPanel
      */
-    public TransportMethodPanel() {
+    public ExcursionPanel() {
         initComponents();
         prepareTable();
     }
@@ -31,15 +29,21 @@ public class TransportMethodPanel extends javax.swing.JPanel {
     public void prepareTable(){
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("#");
-        model.addColumn("Naam");
+        model.addColumn("Beschrijving");
+        model.addColumn("Reis");
+        model.addColumn("Gids");
+        model.addColumn("Price");
         try {
-            String query = "SELECT * FROM Transport_method";
+            String query = "SELECT * FROM Excursion E LEFT JOIN Trip T ON t.id = E.trip_id";
             Statement st = App.conn.createStatement();
             ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
                 int id = rs.getInt("id");
+                String description = rs.getString("description");
                 String name = rs.getString("name");
-                model.insertRow(model.getRowCount(), new Object[]{id, name});
+                String guide = rs.getString("guide_name");
+                float price = rs.getFloat("price");
+                model.insertRow(model.getRowCount(), new Object[]{id, description, name, guide, price});
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -60,7 +64,7 @@ public class TransportMethodPanel extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
-        jLabel1.setText("Transport overzicht");
+        jLabel1.setText("Excursie overzicht");
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -96,16 +100,16 @@ public class TransportMethodPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 275, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,23 +117,23 @@ public class TransportMethodPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
-                .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        new AddTransportMethodView(this).setVisible(true);
+        new AddExcursionView(this).setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
             int id = (int) jTable3.getModel().getValueAt(jTable3.getSelectedRow(), 0);
-            String deleteSQL = "DELETE Transport_method WHERE id = ?";
+            String deleteSQL = "DELETE Excursion WHERE id = ?";
             PreparedStatement ps = App.conn.prepareStatement(deleteSQL);
             ps.setInt(1, id);
             ps.executeUpdate();
