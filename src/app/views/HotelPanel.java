@@ -23,7 +23,7 @@ public class HotelPanel extends javax.swing.JPanel {
      */
     public HotelPanel() {
         initComponents();
-        this.prepareTable();
+        prepareTable();
     }
     
     public void prepareTable(){

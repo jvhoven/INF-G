@@ -6,9 +6,14 @@
 package app.views;
 
 import app.App;
+import app.Country;
+import app.Hotel;
+import app.Transport;
 import java.awt.Dialog;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,6 +34,36 @@ public class AddTripView extends javax.swing.JFrame {
         this.setResizable(false);
         this.panel = panel;
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        loadTranport(transport);
+        loadHotel(hotel);
+    }
+    
+    private void loadTranport(JComboBox box){
+        box.removeAllItems();
+        try {
+            String query = "SELECT * FROM Transport_method";
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                box.addItem(new Transport(rs.getInt("id"), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    private void loadHotel(JComboBox box){
+        box.removeAllItems();
+        try {
+            String query = "SELECT * FROM hotel";
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                box.addItem(new Hotel(rs.getInt("id"), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     /**
@@ -58,6 +93,10 @@ public class AddTripView extends javax.swing.JFrame {
         cancel = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         description = new javax.swing.JTextArea();
+        hotel = new javax.swing.JComboBox();
+        transport = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -99,11 +138,19 @@ public class AddTripView extends javax.swing.JFrame {
         description.setRows(5);
         jScrollPane2.setViewportView(description);
 
+        hotel.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        transport.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel10.setText("Hotel");
+
+        jLabel11.setText("Transport ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
@@ -114,8 +161,13 @@ public class AddTripView extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
                     .addComponent(jLabel8)
-                    .addComponent(jLabel9))
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,10 +184,9 @@ public class AddTripView extends javax.swing.JFrame {
                                         .addComponent(save)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(cancel)))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(hotel, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(transport, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -174,13 +225,21 @@ public class AddTripView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(duration_days, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(save)
-                            .addComponent(cancel)))
+                            .addComponent(jLabel9)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(hotel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(transport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(save)
+                    .addComponent(cancel))
+                .addContainerGap())
         );
 
         pack();
@@ -192,10 +251,11 @@ public class AddTripView extends javax.swing.JFrame {
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
         try {
+            App.conn.setAutoCommit(false);
             String query = "INSERT INTO Trip"
 		+ "(name, description, type, min_participants, max_participants, kids_allowed, duration_days, destination) VALUES"
 		+ "(?,?,?,?,?,?,?,?)";
-            PreparedStatement st = App.conn.prepareStatement(query);
+            PreparedStatement st = App.conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             st.setString(1, name.getText());
             st.setString(2, description.getText());
             st.setString(3, type.getText());
@@ -205,6 +265,24 @@ public class AddTripView extends javax.swing.JFrame {
             st.setInt(7, Integer.parseInt(duration_days.getText()));
             st.setString(8, destionation.getText());
             st.executeUpdate();
+            
+            if(st.getGeneratedKeys().next()){
+                Hotel h = (Hotel) hotel.getSelectedItem();
+                Transport t = (Transport) transport.getSelectedItem();
+                String transportQuery = "INSERT INTO Trip_transport" + "(trip_id, transport_id) VALUES" + "(?,?)";
+                String stayQuery = "INSERT INTO Stay" + "(trip_id, hotel_id) VALUES" + "(?,?)";
+                
+                PreparedStatement transportStatement = App.conn.prepareStatement(transportQuery);
+                transportStatement.setInt(1, st.getGeneratedKeys().getInt(1));
+                transportStatement.setInt(2, t.getId());
+                transportStatement.executeUpdate();
+                
+                PreparedStatement stayStatement = App.conn.prepareStatement(stayQuery); 
+                stayStatement.setInt(1, st.getGeneratedKeys().getInt(1));
+                stayStatement.setInt(2, h.getId());
+                stayStatement.executeUpdate();
+            }
+            App.conn.commit();
             this.panel.prepareTable();
             this.dispose();
         } catch (Exception e) {
@@ -219,7 +297,10 @@ public class AddTripView extends javax.swing.JFrame {
     private javax.swing.JTextArea description;
     private javax.swing.JTextField destionation;
     private javax.swing.JTextField duration_days;
+    private javax.swing.JComboBox hotel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -234,6 +315,7 @@ public class AddTripView extends javax.swing.JFrame {
     private javax.swing.JTextField min_participants;
     private javax.swing.JTextField name;
     private javax.swing.JButton save;
+    private javax.swing.JComboBox transport;
     private javax.swing.JTextField type;
     // End of variables declaration//GEN-END:variables
 }
