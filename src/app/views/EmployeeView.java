@@ -23,7 +23,6 @@ public class EmployeeView extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setTitle("Outdoor Paradise");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        System.out.println("HEEEEHOOO");
     }
     
     private void prepareTable(){
@@ -32,9 +31,9 @@ public class EmployeeView extends javax.swing.JFrame {
         model.addColumn("Voornaam");
         model.addColumn("Achternaam");
         model.addColumn("E-mail");
+        model.addColumn("Telefoon");
         model.addColumn("Salaris");
-        model.addColumn("Voornaam");
-        model.addColumn("Voornaam");
+        jTable1.setModel(model);
     }
 
     /**
