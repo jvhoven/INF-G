@@ -6,6 +6,7 @@
 package app;
 import app.db.Connection;
 import app.util.EnvMap;
+import app.views.MainView;
 
 /**
  *
@@ -15,8 +16,12 @@ public class App {
     
     EnvMap environmentVars;
     
+    
     public App() {
         // Connection conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", "", "");
         environmentVars = new EnvMap();
+        MainView mainView = new MainView();
+        mainView.show();
+        
     }    
 }
