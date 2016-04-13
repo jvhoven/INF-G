@@ -5,7 +5,8 @@
  */
 package app.views;
 
-import java.sql.Statement;
+import app.App;
+import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -35,7 +36,22 @@ public class EmployeeView extends javax.swing.JFrame {
         model.addColumn("E-mail");
         model.addColumn("Telefoon");
         model.addColumn("Salaris");
-        
+        try {
+            String query = "SELECT * FROM Employee JOIN Contact ON Contact.id = Employee.contact_id";
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String first_name = rs.getString("first_name");
+                String last_name = rs.getString("last_name");
+                String email = rs.getString("email");
+                String phone = rs.getString("phone");
+                float salary = rs.getFloat("salary");
+                model.insertRow(model.getRowCount(), new Object[]{id, first_name, last_name, email, phone, salary});
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         jTable1.setModel(model);
     }
 
