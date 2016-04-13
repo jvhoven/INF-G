@@ -31,7 +31,7 @@ public class EmployeeView extends javax.swing.JFrame {
         model.addColumn("Voornaam");
         model.addColumn("Achternaam");
         model.addColumn("E-mail");
-        model.addColumn("Voornaam");
+        model.addColumn("Salaris");
         model.addColumn("Voornaam");
         model.addColumn("Voornaam");
     }
