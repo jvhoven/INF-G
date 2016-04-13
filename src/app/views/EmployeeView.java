@@ -23,6 +23,7 @@ public class EmployeeView extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setTitle("Outdoor Paradise");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        System.out.println("HEEEEHOOO");
     }
     
     private void prepareTable(){
