@@ -5,6 +5,7 @@
  */
 package app.views;
 
+import java.sql.Statement;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -23,6 +24,7 @@ public class EmployeeView extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setTitle("Outdoor Paradise");
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        prepareTable();
     }
     
     private void prepareTable(){
@@ -33,6 +35,7 @@ public class EmployeeView extends javax.swing.JFrame {
         model.addColumn("E-mail");
         model.addColumn("Telefoon");
         model.addColumn("Salaris");
+        
         jTable1.setModel(model);
     }
 

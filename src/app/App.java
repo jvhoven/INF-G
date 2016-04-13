@@ -12,10 +12,10 @@ import app.views.MainView;
  */
 public class App {
      
-    public static Connection conn;
+    public static java.sql.Connection conn;
     
     public App(String user, String pass) {
-        this.conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", user, pass);
+        this.conn = new Connection("jdbc:sqlserver://outdoor-paradise.database.windows.net", user, pass).conn;
         MainView mainView = new MainView();
         mainView.show();
 

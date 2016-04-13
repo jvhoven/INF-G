@@ -15,13 +15,13 @@ import java.sql.Statement;
  */
 public class Connection {
     
-    java.sql.Connection conn;
+    public java.sql.Connection conn;
     
     public Connection(String db_connect_string, String db_userid, String db_password) {
-       this.connect(db_connect_string, db_userid, db_password);
+        this.conn = this.connect(db_connect_string, db_userid, db_password);
     }
     
-   public void connect(String db_connect_string, String db_userid, String db_password) {
+   public java.sql.Connection connect(String db_connect_string, String db_userid, String db_password) {
     try {
        //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
        java.sql.Connection conn = DriverManager.getConnection(db_connect_string, db_userid, db_password);
@@ -32,9 +32,11 @@ public class Connection {
        while (rs.next()) {
           System.out.println(rs.getString(1));
        }
+       return conn;
     } catch (Exception e) {
        e.printStackTrace();
     }
+    return null;
    }
 
 }
