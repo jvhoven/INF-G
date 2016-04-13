@@ -28,6 +28,7 @@ public class AddTripView extends javax.swing.JFrame {
         this.setTitle("Reis toevoegen");
         this.setResizable(false);
         this.panel = panel;
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     /**

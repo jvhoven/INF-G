@@ -19,6 +19,7 @@ public class ReizenView extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setTitle("Outdoor Paradise Reizen");
         jTabbedPane1.add("Reizen", new TripPanel());
+        jTabbedPane1.add("Hotels", new HotelPanel());
     }
 
     /**
