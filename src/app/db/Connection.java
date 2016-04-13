@@ -26,12 +26,6 @@ public class Connection {
        //Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
        java.sql.Connection conn = DriverManager.getConnection(db_connect_string, db_userid, db_password);
        System.out.println("connected");
-       Statement statement = conn.createStatement();
-       String queryString = "select * from sysobjects where type='u'";
-       ResultSet rs = statement.executeQuery(queryString);
-       while (rs.next()) {
-          System.out.println(rs.getString(1));
-       }
        return conn;
     } catch (Exception e) {
        e.printStackTrace();
