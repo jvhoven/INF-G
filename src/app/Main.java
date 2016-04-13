@@ -11,6 +11,8 @@ package app;
  */
 public class Main {
     public static void main(String[] args) {
-        new App();
+        final String MSQL_USER = args[0];
+        final String MSQL_PASS = args[1];
+        new App(MSQL_USER, MSQL_PASS);
     }
 }
