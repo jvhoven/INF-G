@@ -6,7 +6,20 @@
 package app.views;
 
 import app.App;
+import app.Traveller;
+import app.Trip;
+import java.util.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,16 +29,70 @@ import javax.swing.JOptionPane;
 public class AddBookingView extends javax.swing.JFrame {
 
     private BookingPanel panel;
+    private ArrayList<Traveller> travellers;
+    private Traveller selectedBooker;
+    
     /**
      * Creates new form AddBookingView
      */
     public AddBookingView(BookingPanel panel) {
         initComponents();
+        travellers = new ArrayList<>();
         this.setLocationRelativeTo(null);
         this.setTitle("Boeking toevoegen");
         this.setResizable(false);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.panel = panel;
+        this.fetchTravellers();
+        this.loadBookers(this.bookerSelect);
+        this.loadTrips(this.tripSelect);
+    }
+    
+    private void loadTrips(JComboBox box) {
+        box.removeAllItems();
+        try {
+            String query = "SELECT * FROM Trip";
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                box.addItem(new Trip(rs.getInt("id"), rs.getString("name")));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+    private void loadBookers(JComboBox box) {
+        box.removeAllItems();
+        for(Traveller traveller : travellers) {
+            box.addItem(traveller);
+        }
+    }
+    
+    private void loadList(JList<String> list) {
+        list.removeAll();
+        DefaultListModel listModel = new DefaultListModel();
+        for(Iterator<Traveller> i = travellers.iterator(); i.hasNext(); ) {
+            Traveller traveller = i.next();
+            if(selectedBooker != traveller) {
+                listModel.addElement(traveller);   
+            }
+        }
+        list.setModel(listModel);
+    }
+    
+    private void fetchTravellers(){
+        try {
+            String query = "SELECT * FROM Traveller";
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+            while (rs.next()) {
+                Traveller traveller = new Traveller(rs.getInt("id"), rs.getString("name"), rs.getDate("birth_date"), rs.getString("gender")); 
+                this.travellers.add(traveller);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     /**
@@ -37,30 +104,37 @@ public class AddBookingView extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        name = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        birth_date = new javax.swing.JTextField();
-        gender = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
+        bookerSelect = new javax.swing.JComboBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        ibanField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        travellerList = new javax.swing.JList<>();
+        jLabel6 = new javax.swing.JLabel();
+        tripSelect = new javax.swing.JComboBox<>();
+        cancellationInsurance = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setText("Reiziger toevoegen");
+        jLabel1.setText("Boeking toevoegen");
 
-        jLabel2.setText("Naam");
+        jLabel2.setText("Booker");
 
-        jLabel3.setText("Geboortedatum");
+        jLabel3.setText("Travellers");
 
-        gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "male", "female" }));
-        gender.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                genderActionPerformed(evt);
+        bookerSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "male", "female" }));
+        bookerSelect.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                bookerSelectItemStateChanged(evt);
             }
         });
-
-        jLabel5.setText("Geslacht");
+        bookerSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bookerSelectActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Opslaan");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -76,6 +150,31 @@ public class AddBookingView extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Iban");
+
+        travellerList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        travellerList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                travellerListValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(travellerList);
+
+        jLabel6.setText("Trip");
+
+        tripSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        cancellationInsurance.setText("Cancellation insurance");
+        cancellationInsurance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancellationInsuranceActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,52 +183,62 @@ public class AddBookingView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(birth_date)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(name)
-                                .addGap(0, 0, 0))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(63, 63, 63)
-                        .addComponent(gender, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(168, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addGap(76, 76, 76))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButton2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jButton1))
+                                    .addComponent(cancellationInsurance))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(tripSelect, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(bookerSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(ibanField)))
+                                .addGap(31, 31, 31))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(tripSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(birth_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bookerSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(ibanField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(gender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2))))
+                    .addComponent(jLabel3)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cancellationInsurance)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -137,20 +246,47 @@ public class AddBookingView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {      
-            String createTravellerQuery = "INSERT INTO Traveller" + "(name, birth_date, gender) VALUES" + "(?,?,?)";
-            
-            PreparedStatement st = App.conn.prepareStatement(createTravellerQuery);
-            st.setString(1, name.getText());
-            st.setString(2, birth_date.getText());
-            st.setString(3, (String)gender.getSelectedItem());
+        try {
+            App.conn.setAutoCommit(false);
+            String createBooker = "INSERT INTO Booker" + "(traveller_id, customer_id, iban) VALUES" + "(?,?,?)";
+            PreparedStatement st = App.conn.prepareStatement(createBooker, Statement.RETURN_GENERATED_KEYS);
+            st.setInt(1, selectedBooker.getId());
+            st.setInt(2, 1);
+            st.setString(3, ibanField.getText());
             st.executeUpdate();
             
+            if(st.getGeneratedKeys().next()){
+                String createBooking = "INSERT INTO Booking" + "(trip_id, booker_id, date, cancellation_insurance) VALUES" + "(?, ?, ?, ?)";
+                String createParticipation = "INSERT INTO Participation" + "(traveller_id, booking_id) VALUES" + "(?, ?)";
+                Trip trip = (Trip)tripSelect.getSelectedItem();
+                Traveller booker = (Traveller)bookerSelect.getSelectedItem();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+                String currentDate = dateFormat.format(new Date());
+                
+                PreparedStatement st1 = App.conn.prepareStatement(createBooking, Statement.RETURN_GENERATED_KEYS);
+                st1.setInt(1, trip.getId());
+                st1.setInt(2, st.getGeneratedKeys().getInt(1));
+                st1.setString(3, currentDate);
+                st1.setInt(4, cancellationInsurance.isSelected() == true ? 1 : 0);
+                st1.executeUpdate();
+                
+                if(st1.getGeneratedKeys().next()) {
+                    for(Object obj : travellerList.getSelectedValues()) {
+                        Traveller traveller = (Traveller)obj;
+                        PreparedStatement participationStatement = App.conn.prepareStatement(createParticipation);
+                        participationStatement.setInt(1, traveller.getId());
+                        participationStatement.setInt(2, st1.getGeneratedKeys().getInt(1));
+                        participationStatement.executeUpdate();
+                    }
+                }
+            }
+           
+            App.conn.commit();
             panel.prepareTable();
             this.dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Niet alles (goed) ingevuld", "Fout bij invoeren", JOptionPane.ERROR_MESSAGE);
-            System.out.println(e.getMessage());
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -158,20 +294,37 @@ public class AddBookingView extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void genderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genderActionPerformed
+    private void bookerSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookerSelectActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_genderActionPerformed
+    }//GEN-LAST:event_bookerSelectActionPerformed
+
+    private void bookerSelectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_bookerSelectItemStateChanged
+        selectedBooker = (Traveller)bookerSelect.getSelectedItem();
+        this.loadList(travellerList);
+    }//GEN-LAST:event_bookerSelectItemStateChanged
+
+    private void travellerListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_travellerListValueChanged
+
+    }//GEN-LAST:event_travellerListValueChanged
+
+    private void cancellationInsuranceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancellationInsuranceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cancellationInsuranceActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField birth_date;
-    private javax.swing.JComboBox gender;
+    private javax.swing.JComboBox bookerSelect;
+    private javax.swing.JCheckBox cancellationInsurance;
+    private javax.swing.JTextField ibanField;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField name;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JList<String> travellerList;
+    private javax.swing.JComboBox<String> tripSelect;
     // End of variables declaration//GEN-END:variables
 }

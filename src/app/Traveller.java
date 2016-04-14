@@ -25,6 +25,13 @@ public class Traveller {
         this.gender = gender;
     }
     
+    public Traveller(int id, String name, Date birth_date, String gender) {
+        this.id = id;
+        this.name = name;
+        this.birth_date = birth_date;
+        setGender(gender);
+    }
+    
     public int getId() {
         return id;
     }
@@ -57,13 +64,16 @@ public class Traveller {
         }
     }
     
-    public void setGender(Gender gender) {
-        this.gender = gender;
+    public void setGender(String gender) {
+        if(gender.equals("male")) {
+            this.gender = Gender.MALE;
+        } else {
+            this.gender = Gender.FEMALE;
+        }
     }
     
     @Override
     public String toString() {
-        System.out.println(getGender());
-        return this.name + " " + this.birth_date + " " + this.getGender();
+        return this.name;
     }
 }
